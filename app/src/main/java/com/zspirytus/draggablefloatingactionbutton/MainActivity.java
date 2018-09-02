@@ -1,29 +1,23 @@
 package com.zspirytus.draggablefloatingactionbutton;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.widget.Toast;
+import android.support.v7.app.AppCompatActivity;
 
 import com.zspirytus.mylibrary.DraggableFloatingActionButton;
-import com.zspirytus.mylibrary.OnDraggableFABEventListener;
 
 public class MainActivity extends AppCompatActivity {
 
     private DraggableFloatingActionButton mFab;
-    private Toast mToast;
+
+    private boolean isPlaying = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        loadData();
         initView();
         setListener();
-    }
-
-    private void loadData(){
-        mToast = Toast.makeText(this,"",Toast.LENGTH_SHORT);
     }
 
     private void initView(){
@@ -31,24 +25,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setListener(){
-        mFab.setOnDraggableFABEventListener(new OnDraggableFABEventListener() {
-            @Override
-            public void onClick() {
-                mToast.setText("click");
-                mToast.show();
-            }
+        mFab.setOnDraggableFABEventListener(new OnDraggableFABEventListenerImpl(this));
+    }
 
-            @Override
-            public void onDraggedLeft() {
-                mToast.setText("drag left");
-                mToast.show();
-            }
+    public boolean isPlaying() {
+        return isPlaying;
+    }
 
-            @Override
-            public void onDraggedRight() {
-                mToast.setText("drag right");
-                mToast.show();
-            }
-        });
+    public void setPlayState(boolean isPlaying) {
+        this.isPlaying = isPlaying;
     }
 }

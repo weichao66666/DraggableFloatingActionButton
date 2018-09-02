@@ -19,10 +19,14 @@ public class DraggableFloatingActionButton extends FloatingActionButton implemen
     private static final float DEFAULT_DAMPING = 0.618f;
     private static final float DEFAULT_BORDER = 200f;
 
-    private float damping;
-    private float border;
+    private float mDamping;
+    private float mBorder;
+    private boolean isDraggable;
+    private int mLeftDragResId;
+    private int mRightDragResId;
 
-    private static float initRawX;
+    private static float mInitRawX;
+    private static int mCurrentResId;
     private float dX;
     private float deltaX;
 
@@ -49,21 +53,35 @@ public class DraggableFloatingActionButton extends FloatingActionButton implemen
     private void loadAttrs(Context context, AttributeSet attrs) {
         if (attrs != null) {
             TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.dFab);
-            damping = array.getFloat(R.styleable.dFab_damping, DEFAULT_DAMPING);
-            border = array.getDimension(R.styleable.dFab_border, DEFAULT_BORDER);
+            mDamping = array.getFloat(R.styleable.dFab_damping, DEFAULT_DAMPING);
+            mBorder = array.getDimension(R.styleable.dFab_border, DEFAULT_BORDER);
+            isDraggable = array.getBoolean(R.styleable.dFab_draggable, true);
+            mLeftDragResId = array.getResourceId(R.styleable.dFab_leftDragSrc, 0);
+            mRightDragResId = array.getResourceId(R.styleable.dFab_rightDragSrc, 0);
+            mCurrentResId = array.getResourceId(R.styleable.dFab_src, 0);
             array.recycle();
         }
     }
 
     private void init() {
+        this.post(new Runnable() {
+            @Override
+            public void run() {
+                mInitRawX = DraggableFloatingActionButton.this.getX();
+            }
+        });
+        setImageResource(mCurrentResId);
         setOnTouchListener(this);
     }
 
-    @Override
-    public void onWindowFocusChanged(boolean hasWindowFocus) {
-        super.onWindowFocusChanged(hasWindowFocus);
-        // get mFab initial location X
-        initRawX = getX();
+    public void setDraggable(boolean isDraggable) {
+        this.isDraggable = isDraggable;
+    }
+
+    // set image src by resId when dFab is clicked
+    public void setClickSrc(int resId) {
+        setImageResource(resId);
+        mCurrentResId = resId;
     }
 
     @Override
@@ -71,22 +89,22 @@ public class DraggableFloatingActionButton extends FloatingActionButton implemen
         int action = motionEvent.getAction();
         switch (action) {
             case MotionEvent.ACTION_DOWN:
-                dX = initRawX - motionEvent.getRawX();
+                dX = mInitRawX - motionEvent.getRawX();
                 return true;
             case MotionEvent.ACTION_MOVE:
-                deltaX = (motionEvent.getRawX() - initRawX + dX) * damping;
-                if (deltaX < -border) {
-                    deltaX = -border;
+                deltaX = (motionEvent.getRawX() - mInitRawX + dX) * mDamping;
+                if (deltaX < -mBorder) {
+                    deltaX = -mBorder;
                 } else if (deltaX < -CLICK_DRAG_TOLERANCE) {
-
-                } else if (deltaX > CLICK_DRAG_TOLERANCE && deltaX <= border) {
-
-                } else if (deltaX > border) {
-                    deltaX = border;
+                    setImageResource(mLeftDragResId);
+                } else if (deltaX > CLICK_DRAG_TOLERANCE && deltaX <= mBorder) {
+                    setImageResource(mRightDragResId);
+                } else if (deltaX > mBorder) {
+                    deltaX = mBorder;
                 }
-                if (Math.abs(deltaX) >= CLICK_DRAG_TOLERANCE) {
+                if (isDraggable && Math.abs(deltaX) >= CLICK_DRAG_TOLERANCE) {
                     view.animate()
-                            .x(initRawX + deltaX)
+                            .x(mInitRawX + deltaX)
                             .setDuration(RESPONSE_ACTION_MOVE_DELAY)
                             .start();
                 }
@@ -95,18 +113,20 @@ public class DraggableFloatingActionButton extends FloatingActionButton implemen
                 if (onDraggableFABEventListener != null) {
                     if (Math.abs(deltaX) < CLICK_DRAG_TOLERANCE) {
                         onDraggableFABEventListener.onClick();
-                    } else {
-                        if (deltaX == border) {
+                    } else if (isDraggable) {
+                        if (deltaX == mBorder) {
                             onDraggableFABEventListener.onDraggedRight();
-                        } else if (deltaX == -border) {
+                        } else if (deltaX == -mBorder) {
                             onDraggableFABEventListener.onDraggedLeft();
                         }
                     }
                 }
                 view.animate()
-                        .x(initRawX)
+                        .x(mInitRawX)
                         .setDuration(RESET_ANIMATOR_DURATION)
                         .start();
+                setImageResource(mCurrentResId);
+                deltaX = 0;
                 return true;
         }
         return super.onTouchEvent(motionEvent);

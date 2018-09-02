@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:dFab="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -8,17 +7,20 @@
     android:layout_height="match_parent"
     tools:context="com.zspirytus.draggablefloatingactionbutton.MainActivity">
 
-   <com.zspirytus.mylibrary.DraggableFloatingActionButton
-       android:id="@+id/fab"
-       android:layout_width="wrap_content"
-       android:layout_height="wrap_content"
-       android:layout_marginBottom="16dp"
-       android:layout_marginEnd="8dp"
-       android:layout_marginStart="8dp"
-       app:layout_constraintBottom_toBottomOf="parent"
-       app:layout_constraintEnd_toEndOf="parent"
-       app:layout_constraintStart_toStartOf="parent"
-       dFab:border="100dp"
-       dFab:damping="0.618"/>
+    <com.zspirytus.mylibrary.DraggableFloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        dFab:border="100dp"
+        dFab:damping="0.618"
+        dFab:leftDragSrc="@drawable/ic_skip_previous_white_48dp"
+        dFab:rightDragSrc="@drawable/ic_skip_next_white_48dp"
+        dFab:src="@drawable/ic_play_arrow_white_48dp"/>
 
 </android.support.constraint.ConstraintLayout>

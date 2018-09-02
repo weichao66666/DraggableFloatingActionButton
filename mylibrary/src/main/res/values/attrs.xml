@@ -4,6 +4,10 @@
     <declare-styleable name="dFab">
         <attr name="damping" format="float" />
         <attr name="border" format="dimension" />
+        <attr name="draggable" format="boolean" />
+        <attr name="leftDragSrc" format="reference" />
+        <attr name="rightDragSrc" format="reference" />
+        <attr name="src" format="reference" />
     </declare-styleable>
 
 </resources>
