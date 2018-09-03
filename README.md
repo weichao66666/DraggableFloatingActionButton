@@ -14,6 +14,6 @@ allprojects {
 ## Step 2. Add the dependency
 ```
 dependencies {
-    implementation 'com.github.zkw012300:DraggableFloatingActionButton:v1.0'
+    implementation 'com.github.zkw012300:DraggableFloatingActionButton:v1.1'
 }
 ```
