@@ -1,6 +1,6 @@
 package com.zspirytus.draggablefloatingactionbutton;
 
-import android.support.design.widget.FloatingActionButton;
+import android.util.Log;
 
 import com.zspirytus.mylibrary.DraggableFloatingActionButton;
 import com.zspirytus.mylibrary.OnDraggableFABEventListener;
@@ -28,16 +28,21 @@ public class OnDraggableFABEventListenerImpl implements OnDraggableFABEventListe
             mDFab.setClickSrc(R.drawable.ic_pause_white_48dp);
             mActivity.setPlayState(true);
         }
+        Log.e(this.getClass().getSimpleName(), "click");
     }
 
     @Override
     public void onDraggedLeft() {
-
+        Log.e(this.getClass().getSimpleName(), "leftDrag");
     }
 
     @Override
     public void onDraggedRight() {
-
+        Log.e(this.getClass().getSimpleName(), "rightDrag");
     }
 
+    @Override
+    public void onLongClick() {
+        Log.e(this.getClass().getSimpleName(), "longClick");
+    }
 }

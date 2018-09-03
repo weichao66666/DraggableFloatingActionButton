@@ -2,6 +2,7 @@ package com.zspirytus.mylibrary;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -14,10 +15,14 @@ import android.view.View;
 public class DraggableFloatingActionButton extends FloatingActionButton implements View.OnTouchListener {
 
     private static final float CLICK_DRAG_TOLERANCE = 0.382f * 0.382f * 100;
+    private static final long LONG_PRESS_TOLERANCE = 500;
     private static final int RESET_ANIMATOR_DURATION = 382;
     private static final int RESPONSE_ACTION_MOVE_DELAY = 0;
     private static final float DEFAULT_DAMPING = 0.618f;
     private static final float DEFAULT_BORDER = 200f;
+
+    private static Handler myHandler = new Handler();
+    private boolean isLongPress = false;
 
     private float mDamping;
     private float mBorder;
@@ -91,6 +96,15 @@ public class DraggableFloatingActionButton extends FloatingActionButton implemen
         switch (action) {
             case MotionEvent.ACTION_DOWN:
                 dX = mInitRawX - motionEvent.getRawX();
+                myHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (onDraggableFABEventListener != null) {
+                            onDraggableFABEventListener.onLongClick();
+                        }
+                        isLongPress = true;
+                    }
+                }, LONG_PRESS_TOLERANCE);
                 return true;
             case MotionEvent.ACTION_MOVE:
                 deltaX = (motionEvent.getRawX() - mInitRawX + dX) * mDamping;
@@ -112,7 +126,7 @@ public class DraggableFloatingActionButton extends FloatingActionButton implemen
                 return true;
             case MotionEvent.ACTION_UP:
                 if (onDraggableFABEventListener != null) {
-                    if (Math.abs(deltaX) < CLICK_DRAG_TOLERANCE) {
+                    if (!isLongPress && Math.abs(deltaX) < CLICK_DRAG_TOLERANCE) {
                         onDraggableFABEventListener.onClick();
                     } else if (isDraggable) {
                         if (deltaX == mBorder) {
@@ -128,6 +142,8 @@ public class DraggableFloatingActionButton extends FloatingActionButton implemen
                         .start();
                 setImageResource(mCurrentResId);
                 deltaX = 0;
+                isLongPress = false;
+                myHandler.removeCallbacksAndMessages(null);
                 return true;
         }
         return super.onTouchEvent(motionEvent);
