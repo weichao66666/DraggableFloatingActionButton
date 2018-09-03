@@ -64,12 +64,6 @@ public class DraggableFloatingActionButton extends FloatingActionButton implemen
     }
 
     private void init() {
-        this.post(new Runnable() {
-            @Override
-            public void run() {
-                mInitRawX = DraggableFloatingActionButton.this.getX();
-            }
-        });
         setImageResource(mCurrentResId);
         setOnTouchListener(this);
     }
@@ -82,6 +76,13 @@ public class DraggableFloatingActionButton extends FloatingActionButton implemen
     public void setClickSrc(int resId) {
         setImageResource(resId);
         mCurrentResId = resId;
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasWindowFocus) {
+        super.onWindowFocusChanged(hasWindowFocus);
+        // get init location at here
+        mInitRawX = getX();
     }
 
     @Override
